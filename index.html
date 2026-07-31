@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>命令行性能测试工具 | 纯粹 · 无广告 · 极速</title>
+  <style>
+    /* 全局重置 & 字体 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #0b0e14;
+      color: #e8edf5;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* 滚动条美化 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1a1f2a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #3b82f6;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #60a5fa;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* 头部导航 */
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid #1e2633;
+      background: rgba(11, 14, 20, 0.85);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+    .logo span {
+      color: #60a5fa;
+      background: #1e3a5f;
+      padding: 2px 10px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+      background: #1e2633;
+      color: #c8d0dc;
+    }
+    .btn-primary {
+      background: #3b82f6;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+    }
+    .btn-primary:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #2d3748;
+    }
+    .btn-outline:hover {
+      border-color: #3b82f6;
+      color: #3b82f6;
+    }
+    .btn-download {
+      background: #10b981;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+    .btn-download:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.45);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 60px 0 40px;
+      text-align: center;
+      border-bottom: 1px solid #1a1f2a;
+    }
+    .hero h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #f0f4ff, #93bbfc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: #9aa5b5;
+      max-width: 700px;
+      margin: 0 auto 32px;
+    }
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px 24px;
+      margin-bottom: 32px;
+    }
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #141b26;
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      color: #b0bed0;
+      border: 1px solid #1e2a3a;
+    }
+    .badge svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    /* 特色功能 */
+    .features {
+      padding: 60px 0;
+      border-bottom: 1px solid #1a1f2a;
+    }
+    .features h2 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 48px;
+      letter-spacing: -0.02em;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 32px;
+    }
+    .feature-card {
+      background: #131b26;
+      padding: 28px 24px;
+      border-radius: 16px;
+      border: 1px solid #1e2a3a;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-6px);
+      border-color: #3b82f6;
+    }
+    .feature-card .icon {
+      font-size: 2.4rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .feature-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .feature-card p {
+      color: #9aa5b5;
+      font-size: 0.95rem;
+    }
+
+    /* 截图展示 */
+    .screenshots {
+      padding: 60px 0;
+      border-bottom: 1px solid #1a1f2a;
+    }
+    .screenshots h2 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .screenshots .sub {
+      text-align: center;
+      color: #9aa5b5;
+      margin-bottom: 40px;
+    }
+    .screenshot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 30px;
+    }
+    .screenshot-item {
+      background: #0f1620;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #1e2a3a;
+      transition: border-color 0.2s;
+    }
+    .screenshot-item:hover {
+      border-color: #3b82f6;
+    }
+    .screenshot-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #0b0e14;
+    }
+    .screenshot-item .caption {
+      padding: 16px 20px;
+      font-size: 0.9rem;
+      color: #b0bed0;
+      border-top: 1px solid #1a1f2a;
+    }
+
+    /* 下载区 */
+    .download-section {
+      padding: 60px 0;
+      text-align: center;
+    }
+    .download-section h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .download-section p {
+      color: #9aa5b5;
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+    .download-box {
+      background: #131b26;
+      border: 1px solid #1e2a3a;
+      border-radius: 16px;
+      padding: 32px 24px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .download-box .file-info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      color: #b0bed0;
+    }
+    .download-box .file-info span {
+      background: #1a2230;
+      padding: 4px 14px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      border: 1px solid #283445;
+    }
+    .download-box .btn {
+      font-size: 1.1rem;
+      padding: 14px 40px;
+    }
+
+    /* 版权 */
+    footer {
+      margin-top: auto;
+      padding: 30px 0 20px;
+      border-top: 1px solid #1a1f2a;
+      text-align: center;
+      color: #6b7a8f;
+      font-size: 0.9rem;
+    }
+    footer a {
+      color: #60a5fa;
+    }
+
+    /* 响应式 */
+    @media (max-width: 640px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .hero p {
+        font-size: 1rem;
+      }
+      .screenshot-grid {
+        grid-template-columns: 1fr;
+      }
+      .features-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 480px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .nav-actions {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="logo">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="4" />
+          <path d="M8 12 L12 16 L16 8" />
+          <path d="M6 2 L6 6 L10 10" />
+        </svg>
+        <span>PurePerf</span>
+        <span>CLI</span>
+      </div>
+      <div class="nav-actions">
+        <a href="#features" class="btn btn-outline">功能</a>
+        <a href="#screenshots" class="btn btn-outline">截图</a>
+        <a href="#download" class="btn btn-primary">立即下载</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <h1>命令行 · 无广告 · 纯粹性能测试</h1>
+        <p>轻量级 CLI 工具，专为极客和开发者打造，秒级输出 CPU、内存、磁盘、网络等硬核指标，没有任何干扰，只有数据。</p>
+        <div class="hero-badges">
+          <span class="badge">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            零依赖
+          </span>
+          <span class="badge">
+            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            跨平台
+          </span>
+          <span class="badge">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            毫秒级响应
+          </span>
+          <span class="badge">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            开源免费
+          </span>
+        </div>
+        <div class="hero-actions">
+          <a href="#download" class="btn btn-download" style="font-size:1.1rem; padding:14px 40px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+            下载最新版
+          </a>
+          <a href="#" class="btn btn-outline" style="font-size:1.1rem; padding:14px 32px;">查看 GitHub</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 功能特点 -->
+    <section id="features" class="features">
+      <div class="container">
+        <h2>⚡ 为什么选择 PurePerf</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <span class="icon">🚀</span>
+            <h3>极简命令</h3>
+            <p>一行命令启动测试，支持自定义参数，结果清晰可读，完美适配脚本管道。</p>
+          </div>
+          <div class="feature-card">
+            <span class="icon">📊</span>
+            <h3>多维度评测</h3>
+            <p>覆盖 CPU 算力、内存带宽、磁盘 I/O、网络延迟、系统负载等核心指标。</p>
+          </div>
+          <div class="feature-card">
+            <span class="icon">🛡️</span>
+            <h3>无广告 · 无后台</h3>
+            <p>纯命令行交互，不推送任何广告，不驻留后台进程，用完即走。</p>
+          </div>
+          <div class="feature-card">
+            <span class="icon">📦</span>
+            <h3>单文件可执行</h3>
+            <p>无需安装依赖，下载即用，支持 Linux / macOS / Windows，体积小于 5MB。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 截图展示 -->
+    <section id="screenshots" class="screenshots">
+      <div class="container">
+        <h2>📸 运行预览</h2>
+        <p class="sub">终端中的真实表现，简洁直观</p>
+        <div class="screenshot-grid">
+          <div class="screenshot-item">
+            <img src="https://cdn.phototourl.com/free/2026-07-30-cdd29ada-8ede-4936-90ba-a971c571bda0.png" alt="命令行性能测试截图 1" loading="lazy">
+            <div class="caption">CPU & 内存基准测试输出</div>
+          </div>
+          <div class="screenshot-item">
+            <img src="https://cdn.phototourl.com/free/2026-07-30-298c68f4-e209-4976-9e97-9834aae92602.png" alt="命令行性能测试截图 2" loading="lazy">
+            <div class="caption">磁盘 I/O 与网络延迟测试</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 下载 -->
+    <section id="download" class="download-section">
+      <div class="container">
+        <h2>⬇️ 立即获取</h2>
+        <p>免费使用，无任何限制。选择适合您系统的版本，或直接下载通用包。</p>
+        <div class="download-box">
+          <div class="file-info">
+            <span>📁 版本 v2.1.0</span>
+            <span>📅 2026-07-30</span>
+            <span>🔒 开源 MIT</span>
+          </div>
+          <a href="https://heyuzheng.lanzn.com/ixts43zmu14b"
+2" 
+             class="btn btn-download" 
+             style="font-size:1.2rem; padding:16px 48px;"
+             download>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+            下载 PurePerf (所有平台)
+          </a>
+          <p style="margin-top: 16px; font-size:0.85rem; color:#6b7a8f;">
+            支持 Windows / macOS / Linux · 解压后即可运行
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>©️ 2026 摸鱼的猫bush · 纯粹命令行性能测试 · 无广告 · 开源精神</p>
+      <p style="margin-top: 6px; font-size:0.8rem;">
+        基于 <a href="#" style="color:#60a5fa;">GitHub</a> 托管 · 欢迎 Star &amp; Fork
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
